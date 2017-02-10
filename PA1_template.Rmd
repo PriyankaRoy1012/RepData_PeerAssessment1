@@ -1,25 +1,75 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
+title: "Reproducible Research Project 1"
+author: "Priyanka Roy"
+date: "February 10, 2017"
+output: html_document
 ---
+Reading the required packages
+```{r}
+library(plyr)
+library(ggplot2)
+library(lattice)
+```
+
+Reading the data:
+```{r, echo= TRUE}
+activity <- read.csv("D:/Priyanka/Coursera/5.ReproducibleResearch/activity.csv")
+head(activity)
+```
+
+Calculating total number of steps taken per day, its mean and median as well
+```{r}
+activity_sum <- ddply(activity, "date",summarise, StepsTaken = sum(steps))
+activity_sum <- na.omit(activity_sum)
+hist(activity_sum$StepsTaken, main = "Steps taken per day", col = "red", xlab = "Number of steps")
+mean(activity_sum$StepsTaken)
+median(activity_sum$StepsTaken)
+```
+
+Average daily activity pattern
+```{r}
+interval_max <- ddply(activity, "interval", summarise, Max_Interval = mean(steps, na.rm = TRUE))
+plot(interval_max$interval, interval_max$Max_Interval, type = "l", main = "Average Steps on interval")
+interval_max$interval[interval_max$Max_Interval ==  max(interval_max$Max_Interval)]
+```
+
+Imputing Missing values:
+Total number of missing vlues is:
+```{r}
+sum(is.na(activity))
+```
+Strategy- I am replacing all the null values by the average number of steps taken in the corresponding 5-minute interval
+as calculated in interval_max table. New dataset is below:
+```{r}
+activity_imputed <- activity
+for(i in 1:nrow(activity_imputed)){
+  activity_imputed$steps[i]<- ifelse(is.na(activity_imputed$steps[i]),
+                              interval_max$Max_Interval[interval_max$interval== activity_imputed$interval[i]],
+                              activity_imputed$steps[i])
+}
+activity_imputed$steps <- round(activity_imputed$steps,0)
+```
+
+plot and comparison of new data with old data
+```{r}
+act_imp_sum <-  ddply(activity_imputed, "date",summarise, StepsTaken = sum(steps))
+hist(act_imp_sum$StepsTaken, main = "Steps taken per day by Imputed data", col = "red", xlab = "Number of steps")
+mean(act_imp_sum$StepsTaken)
+median(act_imp_sum$StepsTaken)
+```
+After imputing the data, mean is almost the same. However, median got reduced by 4 units.
+
+Differences in activity patterns between weekdays and weekends
+Week Factor created:
+```{r}
+activity_imputed$NewDate <- weekdays(as.Date(activity_imputed$date))
+activity_imputed$Week <- ifelse(activity_imputed$NewDate %in% c("Sunday","Saturday"),"weekend", "weekdays")
+```
+plot for weekend/weekday
+```{r}
+activity_imputed_agg <- ddply(activity_imputed, c("Week","interval"),summarise, Steps = mean(steps, na.rm = TRUE))
+xyplot(Steps ~ interval | Week,data = activity_imputed_agg, type = "l", xlab = "Interval", ylab = "Steps Taken",layout = c(1,2), main = "Average Steps taken in 5-minute interval(Weekends/Weekdays)")
+```
 
 
-## Loading and preprocessing the data
 
-
-
-## What is mean total number of steps taken per day?
-
-
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
