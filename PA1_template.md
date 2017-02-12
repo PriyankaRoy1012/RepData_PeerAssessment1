@@ -37,7 +37,7 @@ activity_sum <- na.omit(activity_sum)
 hist(activity_sum$StepsTaken, main = "Steps taken per day", col = "red", xlab = "Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3](unnamed-chunk-3-1.png)
 
 ```r
 mean(activity_sum$StepsTaken)
@@ -62,7 +62,7 @@ interval_max <- ddply(activity, "interval", summarise, Max_Interval = mean(steps
 plot(interval_max$interval, interval_max$Max_Interval, type = "l", main = "Average Steps on interval")
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+![plot of chunk unnamed-chunk-4](unnamed-chunk-4-1.png)
 
 ```r
 interval_max$interval[interval_max$Max_Interval ==  max(interval_max$Max_Interval)]
@@ -102,7 +102,7 @@ act_imp_sum <-  ddply(activity_imputed, "date",summarise, StepsTaken = sum(steps
 hist(act_imp_sum$StepsTaken, main = "Steps taken per day by Imputed data", col = "red", xlab = "Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+![plot of chunk unnamed-chunk-7](unnamed-chunk-7-1.png)
 
 ```r
 mean(act_imp_sum$StepsTaken)
@@ -135,7 +135,7 @@ activity_imputed_agg <- ddply(activity_imputed, c("Week","interval"),summarise, 
 xyplot(Steps ~ interval | Week,data = activity_imputed_agg, type = "l", xlab = "Interval", ylab = "Steps Taken",layout = c(1,2), main = "Average Steps taken in 5-minute interval(Weekends/Weekdays)")
 ```
 
-![plot of chunk unnamed-chunk-9](figure/unnamed-chunk-9-1.png)
+![plot of chunk unnamed-chunk-9](unnamed-chunk-9-1.png)
 
 
 
